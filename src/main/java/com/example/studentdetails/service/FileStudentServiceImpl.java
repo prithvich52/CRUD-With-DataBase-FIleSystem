@@ -7,6 +7,9 @@ package com.example.studentdetails.service;
 import com.example.studentdetails.exception.APIException;
 import com.example.studentdetails.exception.ResourceNotFoundException;
 import com.example.studentdetails.model.Student;
+import io.swagger.v3.oas.annotations.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.ArrayList;
@@ -16,10 +19,14 @@ import java.util.List;
 @Service
 public class FileStudentServiceImpl implements FileStudentService {
 
+    private static final Logger logger = LoggerFactory.getLogger(FileStudentServiceImpl.class);
+
     private static final String FILE_PATH = "C:\\Users\\DELL\\Desktop\\FileSystem.txt";
+
 
     @Override
     public List<Student> getAllStudents() {
+        logger.info("FileStudentServiceImpl implementation : getAllStudents() method ");
         List<Student> students = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
             Object obj;
@@ -38,6 +45,7 @@ public class FileStudentServiceImpl implements FileStudentService {
 
     @Override
     public Student getStudentById(Long id) {
+        logger.info("FileStudentServiceImpl implementation : getStudentById() method ");
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
             Object obj;
             while ((obj = ois.readObject()) != null) {
@@ -54,6 +62,7 @@ public class FileStudentServiceImpl implements FileStudentService {
 
     @Override
     public Student getStudentByName(String name) {
+        logger.info("FileStudentServiceImpl implementation : getStudentByName() method ");
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
             Object obj;
             while ((obj = ois.readObject()) != null) {
@@ -70,6 +79,7 @@ public class FileStudentServiceImpl implements FileStudentService {
 
     @Override
     public Student addStudent(Student student) {
+        logger.info("FileStudentServiceImpl implementation : addStudent() method ");
         List<Student> students = getAllStudents();
         Long newId = getNextId(students);
         if (isEmailAlreadyExists(students, student.getEmail())) {
@@ -98,6 +108,7 @@ public class FileStudentServiceImpl implements FileStudentService {
     }
 
     public Student updateStudent(Long id, Student updatedStudent)  {
+        logger.info("FileStudentServiceImpl implementation : updateStudent() method ");
         List<Student> students = getAllStudents();
         boolean studentFound = false;
         for (Student student : students) {
@@ -114,7 +125,6 @@ public class FileStudentServiceImpl implements FileStudentService {
                 break;
             }
         }
-
         if (!studentFound) {
             throw new APIException("Student with ID " + id + " does not exist");
         }
